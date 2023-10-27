@@ -15,6 +15,9 @@ class Poly(functions.Func):
             value = self.coefficients[i] + x*value
         return value
     
+    def copy(self):
+        return Poly(self.coefficients.copy())
+    
     def print(self):
         """prints the polynomial"""
         print(self.coefficients)
@@ -33,6 +36,12 @@ class Poly(functions.Func):
         """returns the integral of a polynomial"""
         return Poly([0] + [self.coefficients[i]/(i + 1) for i in range(len(self.coefficients))])
     
+    def mult_Der(self, n):
+        """returns the nth derivative of a polynomial"""
+        if n == 0:
+            return self
+        return self.Der().mult_Der(n-1)
+    
 
 def Poly_add(f : Poly, g : Poly) -> Poly:
     """returns the sum of two polynomials"""
@@ -40,19 +49,69 @@ def Poly_add(f : Poly, g : Poly) -> Poly:
         return Poly([f.coefficients[i] + g.coefficients[i] if i <= g.degree else f.coefficients[i] for i in range(f.degree + 1)])
     return Poly([f.coefficients[i] + g.coefficients[i] if i <= f.degree else g.coefficients[i] for i in range(g.degree + 1)])
 
-def Poly_sub(f : Poly, g : Poly):
+def Poly_sub(f : Poly, g : Poly) -> Poly:
     """returns the difference of two polynomials"""
     if f.degree > g.degree:
         return Poly([f.coefficients[i] - g.coefficients[i] if i <= g.degree else f.coefficients[i] for i in range(f.degree + 1)])
     return Poly([-f.coefficients[i] + g.coefficients[i] if i <= f.degree else -g.coefficients[i] for i in range(g.degree + 1)])
 
-def Poly_mul(f : Poly, g : Poly):
+def Poly_mul(f : Poly, g : Poly) -> Poly:
     """returns the product of two polynomials"""
     coefficients = [0 for _ in range(f.degree + g.degree + 1)]
     for i in range(f.degree + 1):
         for j in range(g.degree + 1):
             coefficients[i + j] += f.coefficients[i]*g.coefficients[j]
     return Poly(coefficients)
+
+def Poly_div(f : Poly, g : Poly) -> Poly:
+    """returns the quotient of when f is divided by g"""
+    if f.degree < g.degree:
+        return Poly([0])
+    
+    h = f.copy()
+    q = Poly([0])
+
+    while h.degree >= g.degree:
+        q = Poly_add(q, Poly([h.coefficients[0]/g.coefficients[0]] + [0 for _ in range(h.degree - g.degree)]))
+        h = Poly_sub(h, Poly_mul(q, g))
+
+    return q
+
+def Poly_rem(f : Poly, g : Poly) -> Poly:
+    """returns the remainder of when f is divided by g using Euclidean division"""
+    if f.degree < g.degree:
+        return f
+    
+    h = f.copy()
+    q = Poly([0])
+
+    while h.degree >= g.degree:
+        q = Poly_add(q, Poly([h.coefficients[0]/g.coefficients[0]] + [0 for _ in range(h.degree - g.degree)]))
+        h = Poly_sub(h, Poly_mul(q, g))
+
+    return h
+
+def Poly_gcd(f : Poly, g : Poly) -> Poly:
+    """returns the greatest common divisor of two polynomials using Euclidean division"""
+    if f.degree < g.degree:
+        return Poly_gcd(g, f)
+    
+    h = f.copy()
+
+    while h.degree >= g.degree:
+        h = Poly_rem(h, g)
+
+    return h
+
+def Poly_lcm(f : Poly, g : Poly) -> Poly:
+    """returns the least common multiple of two polynomials"""
+    return Poly_mul(f, g)/Poly_gcd(f, g)
+
+def Poly_eq(f : Poly, g : Poly) -> bool:
+    """returns whether two polynomials are equal"""
+    return f.coefficients == g.coefficients
+
+    
 
 def laggy_interpol(points : list) -> Poly:
     """uses lagrange interpolation to return an interpolating polynomial whose graph passes through all the points in the list"""
@@ -102,13 +161,4 @@ def newt_interpol(f, a, b, n):
 
 
 
-
-# laggy_interpol([(1, 1), (2, 2)]).print()
-
-# interpol(lambda x : x, [1, 2]).print()
-# p = Poly([1, 5, 6])
-# q = Poly([3, 4, 1])
-
-# Poly_mul(p, q).print()
-# p.print()
-# print("Hell")
+(Poly_div(Poly([1, 2, 1]), Poly([1, 1]))).print()

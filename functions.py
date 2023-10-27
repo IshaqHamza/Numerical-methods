@@ -14,12 +14,16 @@ class Func:
         
         return (self.div_diff(xs[1:]) - self.div_diff(xs[:-1])) / (xs[-1] - xs[0])
     
+    def copy(self):
+        return Func(self.f)
+    
 
     def plot(self, a : float, b : float):
         x = [a + (b - a)*i/1000 for i in range(1001)]
         y = [self(point) for point in x]
         plt.plot(x, y)
         plt.show()
+
 
     # def bisec(self, a : float, b : float):
     #     """returns a root of f in the interval (a, b) if it exists"""
