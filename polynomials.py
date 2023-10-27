@@ -156,9 +156,11 @@ def newt_interpol(f, a, b, n):
 
     h = (b - a)/n
 
-    return interpol(f, [(a + i*h, f(a + i*h)) for i in range(n+1)])
+    return interpol(f, [a + i*h for i in range(n+1)])
 
 
 
 
-(Poly_div(Poly([1, 2, 1]), Poly([1, 1]))).print()
+
+(newt_interpol(lambda x: x**2, 0, 10, 10)).print()
+(newt_interpol(lambda x: x**2, 0, 10, 10)).plot(0, 10)
