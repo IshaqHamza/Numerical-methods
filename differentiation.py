@@ -19,8 +19,13 @@ def backward_der(f, x, h, n):
 def central_der(f, x, h, n):
     """returns the derivative of f at x using central difference method of order n with step size h"""
 
-    p = newt_interpol(f, x - n*floor(h/2), x + n*ceil(h/2), n)
+    p = newt_interpol(f, x - (h/2)*floor(n/2), x + (h/2)*ceil(n/2), n)
 
     return p.Der()(x)
 
-print(forward_der(lambda x : x**2, 1, 1, 10))
+def mult_der(f, x, n, h = 0.00001, N = 100):
+    """returns the n'th derivative of f at x using central differences with step size h"""
+
+    p = newt_interpol(f, x - (h/2)*floor(N/2), x + (h/2)*ceil(N/2), n)
+
+    return p.mult_Der(n)(x)

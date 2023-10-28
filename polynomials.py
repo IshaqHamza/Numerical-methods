@@ -1,9 +1,9 @@
-import math
-import functions
+from math import *
+from functions import *
 import typing
 import matplotlib.pyplot as plt
-
-class Poly(functions.Func):
+from roots import *
+class Poly():
     def __init__(self, coefficients: list[float]): # coefficients are in the form [a_0, a_1, ..., a_n] for a_n*x^n + ... + a_1*x + a_0
         self.coefficients = coefficients
         self.degree = len(coefficients) - 1
@@ -28,6 +28,12 @@ class Poly(functions.Func):
         plt.plot(x, y)
         plt.show()
 
+    def div_diff(self, xs: list[float]) -> float:
+        """returns the divided difference of a polynomial at the points in xs"""
+        if len(xs) == 1:
+            return self(xs[0])
+        return (self.div_diff(xs[1:]) - self.div_diff(xs[:-1])) / (xs[-1] - xs[0])
+
     def Der(self):
         """returns the derivative of a polynomial"""
         return Poly([self.coefficients[i]*i for i in range(1, len(self.coefficients))]) if self.degree > 0 else Poly([0])
@@ -42,6 +48,10 @@ class Poly(functions.Func):
             return self
         return self.Der().mult_Der(n-1)
     
+    def root(self, a : float, b : float, tol = 0.00001, N = 10000):
+        """returns a root of a polynomial in the interval (a, b) if it exists"""
+        return regula_falsi(self, a, b, tol, N)
+
 
 def Poly_add(f : Poly, g : Poly) -> Poly:
     """returns the sum of two polynomials"""
@@ -136,10 +146,10 @@ def laggy_interpol(points : list) -> Poly:
     return result
 
 
-def interpol(f : functions, points : list[float]):
+def interpol(f : Func, points : list[float]):
     """uses newton interpolation to return an n-degree polynomial which interpolates f at all the values in points"""
 
-    F = functions.Func(f)
+    F = Func(f)
     result = Poly([f(points[0])])
     P = Poly([1])
 
@@ -154,13 +164,38 @@ def interpol(f : functions, points : list[float]):
 def newt_interpol(f, a, b, n):
     """returns an n-degree polynomial which interpolates f at n + 1 equispaced points starting at a and ending at b"""
 
+    if n == 0:
+        return Poly([f(a)])
+
     h = (b - a)/n
 
     return interpol(f, [a + i*h for i in range(n+1)])
 
 
+def legendre_poly(n):
+    """returns the nth legendre polynomial in monic form (coefficient of x^n is 1)"""
+    if n == 0:
+        return Poly([1])
+    if n == 1:
+        return Poly([0, 1])
+    
+    return Poly_div(Poly_mul((Poly_mul(Poly([2*n - 1]), Poly([0, 1])), legendre_poly(n-1)) - Poly_mul(Poly([n - 1]), legendre_poly(n-2))), Poly([n]))
 
+def legendre_root(n, k):
+    """returns the kth root of the legendre polynomial of degree n"""
+    if not n:
+        if k != 1:
+            return None
+        return 0
+    if k > n:
+        return None
+    e_nk = (1 - 1/(8*n**2) + 1/(8*n**3))*cos(pi*(4*k - 1)/(4*n + 2))
 
+    return newton(legendre_poly(n), e_nk, 0.00001, 10)
 
-(newt_interpol(lambda x: x**2, 0, 10, 10)).print()
-(newt_interpol(lambda x: x**2, 0, 10, 10)).plot(0, 10)
+def legendre_roots(n):
+    """returns the roots of the legendre polynomial of degree n"""
+    return [legendre_root(n, k) for k in range(1, n+1)]
+
+# print(legendre_poly(3))
+# print(legendre_roots(3))

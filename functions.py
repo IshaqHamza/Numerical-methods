@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
-
+from differentiation import *
+from roots import *
+from polynomials import *
 class Func:
     def __init__(self, f):
         self.f = f
@@ -31,7 +33,17 @@ class Func:
 
     
 
-    # def Der(self):
+    def Der(self):
+        return Func(lambda x : central_der(self.f, x, 0.00001, 100))
+    
+    def mult_Der(self, n, h = 0.00001, N = 100):
+        if n == 0:
+            return self
+        return Func(lambda x: mult_der(self.f, x, n, h, N))
+
+    def root(self, a : float, b : float, tol = 0.00001, N = 10000):
+        return regula_falsi(self.f, a, b, tol, N)
+    
 
     # def Int(self):
 
