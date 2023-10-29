@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
-from differentiation import *
 from roots import *
 from polynomials import *
+from scipy.misc import *
 class Func:
     def __init__(self, f):
         self.f = f
@@ -34,12 +34,12 @@ class Func:
     
 
     def Der(self):
-        return Func(lambda x : central_der(self.f, x, 0.00001, 100))
+        return Func(lambda x: derivative(self.f, x))
     
-    def mult_Der(self, n, h = 0.00001, N = 100):
+    def mult_Der(self, n,):
         if n == 0:
             return self
-        return Func(lambda x: mult_der(self.f, x, n, h, N))
+        return Func(lambda x : derivative(self.f, x, n))
 
     def root(self, a : float, b : float, tol = 0.00001, N = 10000):
         return regula_falsi(self.f, a, b, tol, N)
@@ -51,3 +51,51 @@ class Func:
 # Func(lambda x : x**2 + 3).plot(-2, 5)
 
 # print((Func(lambda x : x**2)).div_diff([1, 2, 4]))
+
+def laggy_interpol(points : list) -> Poly:
+    """uses lagrange interpolation to return an interpolating polynomial whose graph passes through all the points in the list"""
+    
+    n = len(points)
+
+    result = Poly([0])
+
+    for i in range(len(points)):
+        yL_nk = Poly([points[i][1]])
+
+        x_i = points[i][0]
+
+        for j in range(i):
+            yL_nk = Poly_mul(yL_nk, Poly([-points[j][0]/(x_i - points[j][0]), 1/(x_i - points[j][0])]))
+
+        for j in range(i+1, n):
+            yL_nk = Poly_mul(yL_nk, Poly([-points[j][0]/(x_i - points[j][0]), 1/(x_i - points[j][0])]))
+
+        result = Poly_add(result, yL_nk)
+
+    return result
+
+
+def interpol(f : Func, points : list[float]):
+    """uses newton interpolation to return an n-degree polynomial which interpolates f at all the values in points"""
+
+    F = Func(f)
+    result = Poly([f(points[0])])
+    P = Poly([1])
+
+    for k in range(1, len(points)):
+        P = Poly_mul(P, Poly([-points[k-1], 1]))
+        result = Poly_add(result, Poly_mul(Poly([F.div_diff(points[:k+1])]), P))
+
+    return result
+
+    
+
+def newt_interpol(f, a, b, n):
+    """returns an n-degree polynomial which interpolates f at n + 1 equispaced points starting at a and ending at b"""
+
+    if n == 0:
+        return Poly([f(a)])
+
+    h = (b - a)/n
+
+    return interpol(f, [a + i*h for i in range(n+1)])

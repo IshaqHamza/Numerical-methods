@@ -58,7 +58,7 @@ def gauss_quadrature(f, a, b, n):
     #then we use roots of n'th legendre polynomial to find the nodes and weights
 
     nodes = [legendre_root(n, k) for k in range(1, n+1)]
-    weights = [2/((1 - nodes[k-1]**2)*(legendre_poly(n).Der()(nodes[k-1]))**2) for k in range(1, n+1)]
+    weights = [2/((1 - nodes[k-1]**2)*(legendre_monic(n).Der()(nodes[k-1]))**2) for k in range(1, n+1)]
 
     #finally we use the nodes and weights to evaluate the integral
 

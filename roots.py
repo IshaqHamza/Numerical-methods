@@ -1,5 +1,5 @@
 import math
-from functions import *
+from scipy.misc import derivative
 
 def bisection(f, a, b, tol, N):
     a1 = a
@@ -35,7 +35,7 @@ def newton(f, p0, tol, N):
     i = 0
     p = p0
 
-    df = f.Der()
+    df = derivative(f, p)
 
     while i < N:
         p1 = p - f(p)/df(p)
