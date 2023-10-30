@@ -3,14 +3,14 @@ from functions import *
 from polynomials import *
 
 def forward_der(f, x, h, n):
-    """returns the derivative of f at x using forward difference metthod of order n with step size h"""
+    """returns the derivative of f at x using forward difference method of order n with step size h"""
 
     p = newt_interpol(f, x, x + n*h, n)
 
     return p.Der()(x)
 
 def backward_der(f, x, h, n):
-    """returns the derivative of f at x using backward difference metthod of order n with step size h"""
+    """returns the derivative of f at x using backward difference method of order n with step size h"""
 
     p = newt_interpol(f, x - n*h, x, n)
 

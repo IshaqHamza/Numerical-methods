@@ -1,4 +1,5 @@
 from polynomials import *
+from functions import *
 
 def closed_cotes(f, a, b, n):
     """returns the integral of f from a to b using closed cotes method of order n"""
@@ -57,12 +58,12 @@ def gauss_quadrature(f, a, b, n):
     
     #then we use roots of n'th legendre polynomial to find the nodes and weights
 
-    nodes = [legendre_root(n, k) for k in range(1, n+1)]
-    weights = [2/((1 - nodes[k-1]**2)*(legendre_monic(n).Der()(nodes[k-1]))**2) for k in range(1, n+1)]
+    nodes = legendre_roots(n)
 
-    #finally we use the nodes and weights to evaluate the integral
+    P = interpol(g, nodes)
+    PP = P.Int()
+    return (PP(1) - PP(-1))*(b-a)/2
 
-    return sum([weights[k-1]*g(nodes[k-1]) for k in range(1, n+1)])*(b - a)/2
 
 
 def double_int(f, a, b, c, d, n, m, x_rule, y_rule):
@@ -70,3 +71,4 @@ def double_int(f, a, b, c, d, n, m, x_rule, y_rule):
     return int_comp(lambda y : int_comp(lambda x : f(x, y), a, b, n, x_rule), c, d, m, y_rule)
 
 
+print(gauss_quadrature(lambda x: x**21, 1, 2, 11))

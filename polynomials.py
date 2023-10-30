@@ -2,6 +2,7 @@ from math import *
 import typing
 import matplotlib.pyplot as plt
 from roots import *
+import numpy.polynomial as P
 class Poly():
     def __init__(self, coefficients: list[float]): # coefficients are in the form [a_0, a_1, ..., a_n] for a_n*x^n + ... + a_1*x + a_0
         self.coefficients = coefficients
@@ -74,17 +75,22 @@ def Poly_mul(f : Poly, g : Poly) -> Poly:
 
 def Poly_div(f : Poly, g : Poly) -> Poly:
     """returns the quotient of when f is divided by g"""
+    
+    if g.degree == 0:
+        return Poly([f.coefficients[i]/g.coefficients[0] for i in range(f.degree + 1)])
+    
     if f.degree < g.degree:
         return Poly([0])
     
+    coefficients = [0 for _ in range(f.degree - g.degree + 1)]
     h = f.copy()
-    q = Poly([0])
+    for i in range(f.degree - g.degree, -1, -1):
+        coefficients[i] = h.coefficients[i + g.degree]/g.coefficients[g.degree]
+        for j in range(g.degree + 1):
+            h.coefficients[i + j] -= coefficients[i]*g.coefficients[j]
+    return Poly(coefficients)
 
-    while h.degree >= g.degree:
-        q = Poly_add(q, Poly([h.coefficients[0]/g.coefficients[0]] + [0 for _ in range(h.degree - g.degree)]))
-        h = Poly_sub(h, Poly_mul(q, g))
-
-    return q
+    
 
 def Poly_rem(f : Poly, g : Poly) -> Poly:
     """returns the remainder of when f is divided by g using Euclidean division"""
@@ -130,15 +136,24 @@ def legendre_poly(n):
         return Poly([1])
     if n == 1:
         return Poly([0, 1])
-    
-    P =  Poly_sub(Poly_mul(Poly([2 - 1/n]), Poly_mul(Poly([0, 1]), legendre_poly(n-1))), Poly_mul(Poly([1 - 1/n]), legendre_poly(n-2)))
-    return P
 
-    # return Poly_mul(P, Poly([1/P.coefficients[-1]]))
+    P_n_1 = legendre_poly(n-1)
+    P_n_2 = legendre_poly(n-2)
+
+    A = Poly_mul(P_n_1, Poly([2*n - 1]))
+    A = Poly([c/n for c in A.coefficients])
+    A = Poly_mul(A, Poly([0, 1]))
+
+    B = Poly_mul(P_n_2, Poly([n - 1]))
+    B = Poly([c/n for c in B.coefficients])
+
+    return Poly_sub(A, B)
+
+
 
 def legendre_monic(n):
     P = legendre_poly(n)
-    return Poly_mul(P, Poly([1/P.coefficients[-1]]))
+    return Poly_div(P, Poly([P.coefficients[-1]]))
 
 def legendre_root(n, k):
     """returns the kth root of the legendre polynomial of degree n"""

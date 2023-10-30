@@ -39,7 +39,7 @@ class Func:
     def mult_Der(self, n,):
         if n == 0:
             return self
-        return Func(lambda x : derivative(self.f, x, n))
+        return Func(lambda x : derivative(self.f, x, dx = 0.000001, n = n, order = n+1))
 
     def root(self, a : float, b : float, tol = 0.00001, N = 10000):
         return regula_falsi(self.f, a, b, tol, N)
@@ -75,7 +75,7 @@ def laggy_interpol(points : list) -> Poly:
     return result
 
 
-def interpol(f : Func, points : list[float]):
+def interpol(f, points : list[float]):
     """uses newton interpolation to return an n-degree polynomial which interpolates f at all the values in points"""
 
     F = Func(f)
@@ -99,3 +99,6 @@ def newt_interpol(f, a, b, n):
     h = (b - a)/n
 
     return interpol(f, [a + i*h for i in range(n+1)])
+
+
+
