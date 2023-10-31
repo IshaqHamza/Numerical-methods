@@ -1,5 +1,7 @@
 from polynomials import *
 from functions import *
+from math import *
+
 
 def closed_cotes(f, a, b, n):
     """returns the integral of f from a to b using closed cotes method of order n"""
@@ -71,4 +73,14 @@ def double_int(f, a, b, c, d, n, m, x_rule, y_rule):
     return int_comp(lambda y : int_comp(lambda x : f(x, y), a, b, n, x_rule), c, d, m, y_rule)
 
 
-print(gauss_quadrature(lambda x: x**21, 1, 2, 11))
+def mult_int(f, lows, highs, number_intervals_list, rule):
+    """returns the multiple integral of f over the multi-dimensional rectangle defined by lows and highs using rule with number_intervals_list[i] as the number of intervals in the i'th dimension"""
+
+    def helper(f, lows, highs, number_intervals_list, rule, i):
+        """returns the multiple integral of f over the multi-dimensional rectangle defined by lows and highs using rule with number_intervals_list[i] as the number of intervals in the i'th dimension"""
+        if i == len(number_intervals_list) - 1:
+            return int_comp(lambda x : f(*x), lows, highs, number_intervals_list[i], rule)
+        return int_comp(lambda x : helper(f, x + [0], highs, number_intervals_list, rule, i+1), lows[i], highs[i], number_intervals_list[i], rule)
+
+    return helper(f, lows, highs, number_intervals_list, rule, 0)
+
