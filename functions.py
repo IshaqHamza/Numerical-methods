@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 from roots import *
 from polynomials import *
 from scipy.misc import *
+from math import *
+
 class Func:
     def __init__(self, f):
         self.f = f
@@ -15,6 +17,19 @@ class Func:
             return self(xs[0])
         
         return (self.div_diff(xs[1:]) - self.div_diff(xs[:-1])) / (xs[-1] - xs[0])
+
+    def forward_diff_undiv(self, x : float, h : float, k) -> float:
+        if k == 0:
+            return self(x)
+        return self.forward_diff_undiv(x + h, h, k-1) - self.forward_diff_undiv(x, h, k-1)
+
+    def backward_diff_undiv(self, x : float, h : float, k) -> float:
+        if k == 0:
+            return self(x)
+        return self.backward_diff_undiv(x, h, k-1) - self.backward_diff_undiv(x - h, h, k-1)
+
+    def __add__(self, other):
+        return Func(lambda x : self(x) + other(x))
     
     def copy(self):
         return Func(self.f)
@@ -27,12 +42,6 @@ class Func:
         plt.show()
 
 
-    # def bisec(self, a : float, b : float):
-    #     """returns a root of f in the interval (a, b) if it exists"""
-
-
-    
-
     def Der(self):
         return Func(lambda x: derivative(self.f, x))
     
@@ -43,14 +52,10 @@ class Func:
 
     def root(self, a : float, b : float, tol = 0.00001, N = 10000):
         return regula_falsi(self.f, a, b, tol, N)
+
+
     
 
-    # def Int(self):
-
-
-# Func(lambda x : x**2 + 3).plot(-2, 5)
-
-# print((Func(lambda x : x**2)).div_diff([1, 2, 4]))
 
 def laggy_interpol(points : list) -> Poly:
     """uses lagrange interpolation to return an interpolating polynomial whose graph passes through all the points in the list"""
@@ -99,6 +104,3 @@ def newt_interpol(f, a, b, n):
     h = (b - a)/n
 
     return interpol(f, [a + i*h for i in range(n+1)])
-
-
-

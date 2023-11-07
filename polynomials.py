@@ -28,6 +28,30 @@ class Poly():
         plt.plot(x, y)
         plt.show()
 
+    def __add__(self, other):
+        """returns the sum of two polynomials"""
+        if self.degree > other.degree:
+            return Poly([self.coefficients[i] + other.coefficients[i] if i <= other.degree else self.coefficients[i] for i in range(self.degree + 1)])
+        return Poly([self.coefficients[i] + other.coefficients[i] if i <= self.degree else other.coefficients[i] for i in range(other.degree + 1)])
+
+    def __sub__(self, other):
+        """returns the difference of two polynomials"""
+        if self.degree > other.degree:
+            return Poly([self.coefficients[i] - other.coefficients[i] if i <= other.degree else self.coefficients[i] for i in range(self.degree + 1)])
+        return Poly([self.coefficients[i] - other.coefficients[i] if i <= self.degree else -other.coefficients[i] for i in range(other.degree + 1)])
+
+    def __mul__(self, other):
+        """returns the product of two polynomials"""
+        coefficients = [0 for _ in range(self.degree + other.degree + 1)]
+        for i in range(self.degree + 1):
+            for j in range(other.degree + 1):
+                coefficients[i + j] += self.coefficients[i]*other.coefficients[j]
+        return Poly(coefficients)
+
+    def __truediv__(self, other):
+        """returns the quotient of when self is divided by other"""
+
+
     def div_diff(self, xs: list[float]) -> float:
         """returns the divided difference of a polynomial at the points in xs"""
         if len(xs) == 1:
@@ -126,9 +150,6 @@ def Poly_eq(f : Poly, g : Poly) -> bool:
     """returns whether two polynomials are equal"""
     return f.coefficients == g.coefficients
 
-    
-
-
 
 def legendre_poly(n):
     """returns the legendre polynomial of degree n"""
@@ -182,5 +203,3 @@ def legendre_root(n, k):
 def legendre_roots(n):
     """returns the roots of the legendre polynomial of degree n"""
     return [legendre_root(n, k) for k in range(1, n+1)]
-
-

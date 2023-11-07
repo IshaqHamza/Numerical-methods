@@ -26,10 +26,10 @@ def fixed_point(f, p0, tol, N):
     while i < N:
         p1 = f(p)
         if abs(p1 - p) < tol:
-            return (p1, i)
+            return p1
         p = f(p)
         i += 1
-    return "method failed"
+    return p1
 
 def newton(f, p0, tol, N):
     i = 0
