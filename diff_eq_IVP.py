@@ -5,6 +5,7 @@ from functions import *
 from scipy.misc import derivative
 from roots import *
 from math import *
+from linear_algebra import *
 
 def euler(f, a, b, alpha, h):
     """returns a list of points (x, y) which approximate the solution to the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h"""
@@ -56,7 +57,7 @@ def RK2(f, a, b, alpha, h):     #seems correct
 
     return result
 
-def RK4(f, a, b, alpha, h):     # hoping its correct (mostly not ig)
+def RK4(f, a, b, alpha, h):     # hoping its correct 
     """returns a list of points (x, y) which approximate the solution to the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h using RK-4 method"""
 
     x = a
@@ -75,7 +76,7 @@ def RK4(f, a, b, alpha, h):     # hoping its correct (mostly not ig)
 
     return result
 
-def trap_diffeq(f, a, b, alpha, h):
+def trap_IVP(f, a, b, alpha, h):
     """returns a list of points (x, y) which approximate the solution to the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h using trapezoidal method"""
 
     x = a
@@ -178,4 +179,5 @@ def pred_corr(f, a, b, alpha, h, m, W):
         i += 1
     
     return result
+
 

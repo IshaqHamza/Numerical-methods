@@ -1,5 +1,8 @@
 import math
 from scipy.misc import derivative
+from linear_algebra import *
+
+
 
 def bisection(f, a, b, tol, N):
     a1 = a

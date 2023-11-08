@@ -103,8 +103,32 @@ class vector(matrix):
         return self.coordinates != other.coordinates
     
     
+def gauss_elim(A: matrix, b: vector)->vector:
+    """returns the solution to the system Ax = b using gaussian elimination"""
 
-    
+    n = A.dimension[0]
+    m = A.dimension[1]
 
-    
-    
+    if n != m:
+        raise ValueError("Matrix must be square")
+
+    if n != b.dimension:
+        raise ValueError("Matrix and vector must have same dimensions")
+
+    Ab = matrix([[A.rows[i][j] for j in range(m)] + [b.coordinates[i]] for i in range(n)])
+
+    for i in range(n):
+        for j in range(i+1, n):
+            if Ab.rows[i][i] == 0:
+                raise ValueError("Matrix is singular")
+            Ab.rows[j] = [Ab.rows[j][k] - Ab.rows[i][k]*(Ab.rows[j][i]/Ab.rows[i][i]) for k in range(m+1)]
+
+    for i in range(n-1, -1, -1):
+        if Ab.rows[i][i] == 0:
+            raise ValueError("Matrix is singular")
+        Ab.rows[i] = [Ab.rows[i][j]/Ab.rows[i][i] for j in range(m+1)]
+        for j in range(i):
+            Ab.rows[j] = [Ab.rows[j][k] - Ab.rows[i][k]*Ab.rows[j][i] for k in range(m+1)]
+
+    return vector([Ab.rows[i][-1] for i in range(n)])
+
