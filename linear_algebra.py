@@ -76,6 +76,9 @@ class vector(matrix):
     def __abs__(self):
         return sqrt(sum([coordinate**2 for coordinate in self.coordinates]))
     
+    def inf_norm(self):
+        return max([abs(coordinate) for coordinate in self.coordinates])
+    
     def __add__(self, other):
         return vector([self.coordinates[i] + other.coordinates[i] for i in range(self.dimension)])
     
@@ -117,18 +120,83 @@ def gauss_elim(A: matrix, b: vector)->vector:
 
     Ab = matrix([[A.rows[i][j] for j in range(m)] + [b.coordinates[i]] for i in range(n)])
 
-    for i in range(n):
-        for j in range(i+1, n):
-            if Ab.rows[i][i] == 0:
-                raise ValueError("Matrix is singular")
-            Ab.rows[j] = [Ab.rows[j][k] - Ab.rows[i][k]*(Ab.rows[j][i]/Ab.rows[i][i]) for k in range(m+1)]
-
-    for i in range(n-1, -1, -1):
-        if Ab.rows[i][i] == 0:
+    for i in range(n-1):
+        # find first non-zero entry in row i
+        j = i
+        while j < n and Ab.rows[j][i] == 0:
+            j += 1
+        if j == n:
             raise ValueError("Matrix is singular")
-        Ab.rows[i] = [Ab.rows[i][j]/Ab.rows[i][i] for j in range(m+1)]
-        for j in range(i):
-            Ab.rows[j] = [Ab.rows[j][k] - Ab.rows[i][k]*Ab.rows[j][i] for k in range(m+1)]
+        # swap rows i and j
+        Ab.rows[i], Ab.rows[j] = Ab.rows[j], Ab.rows[i]
+        # subtract multiples of row i from rows below i
+        for j in range(i+1, n):
+            Ab.rows[j] = [Ab.rows[j][k] - Ab.rows[i][k]*Ab.rows[j][i]/Ab.rows[i][i] for k in range(m+1)]
+        
+    # back substitution
+    x = vector([0 for i in range(n)])
+    for i in range(n-1, -1, -1):
+        x.coordinates[i] = (Ab.rows[i][-1] - sum([Ab.rows[i][j]*x.coordinates[j] for j in range(i+1, n)]))/Ab.rows[i][i]
+    
+    return x
 
-    return vector([Ab.rows[i][-1] for i in range(n)])
 
+def gauss_jack(A: matrix, b: vector, x: vector, N: int = 1000000, tol = 0.001)->vector:
+    """returns the solution to the system Ax = b using the Gauss-Jacobi method"""
+
+    n = A.dimension[0]
+    m = A.dimension[1]
+
+    if n != m:
+        raise ValueError("Matrix must be square")
+
+    if n != b.dimension:
+        raise ValueError("Matrix and vector must have same dimensions")
+
+    if n != x.dimension:
+        raise ValueError("Matrix and vector must have same dimensions")
+    
+    for i in range(n):
+        if A.rows[i][i] == 0:
+            raise ValueError("Matrix is singular")
+        
+    for _ in range(N):
+        x_old = x
+        x = vector([(b.coordinates[i] - sum([A.rows[i][j]*x.coordinates[j] for j in range(n) if j != i]))/A.rows[i][i] for i in range(n)])
+        if abs(x - x_old) < tol:
+            break
+
+    return x
+
+def gauss_seidel(A: matrix, b: vector, x: vector, N: int = 1000)->vector:
+    """returns the solution to the system Ax = b using the Gauss-Seidel method"""
+
+    n = A.dimension[0]
+    m = A.dimension[1]
+
+    if n != m:
+        raise ValueError("Matrix must be square")
+
+    if n != b.dimension:
+        raise ValueError("Matrix and vector must have same dimensions")
+
+    if n != x.dimension:
+        raise ValueError("Matrix and vector must have same dimensions")
+
+    for i in range(n):
+        if A.rows[i][i] == 0:
+            raise ValueError("Matrix is singular")
+
+    for _ in range(N):
+        for i in range(n):
+            x.coordinates[i] = (b.coordinates[i] - sum([A.rows[i][j]*x.coordinates[j] for j in range(n) if j != i]))/A.rows[i][i]
+
+    return x
+
+print(gauss_elim(matrix([[4, -1, 1], [2, 5, 2], [1, 2, 4]]), vector([8, 3, 11])))
+print(gauss_jack(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
+print(gauss_seidel(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
+# print(gauss_jack(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1]), vector([0, 0, 0]))) does not converge
+# print(gauss_seidel(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5]), vector([0, 0, 0, 0]))) does not converge
+print(gauss_elim(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1])))
+print(gauss_elim(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5])))
