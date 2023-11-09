@@ -66,6 +66,11 @@ class matrix:
     
     def is_singular(self):
         return abs(self) == 0
+    
+    def print(self):
+        for row in self.rows:
+            print(row)
+        print()
 
 
 class vector(matrix):
@@ -105,6 +110,8 @@ class vector(matrix):
     def __ne__(self, other):
         return self.coordinates != other.coordinates
     
+    def print(self):
+        print(self.coordinates)
     
 def gauss_elim(A: matrix, b: vector)->vector:
     """returns the solution to the system Ax = b using gaussian elimination"""
@@ -163,6 +170,7 @@ def gauss_jack(A: matrix, b: vector, x: vector, N: int = 1000000, tol = 0.001)->
     for _ in range(N):
         x_old = x
         x = vector([(b.coordinates[i] - sum([A.rows[i][j]*x.coordinates[j] for j in range(n) if j != i]))/A.rows[i][i] for i in range(n)])
+        x.print()
         if abs(x - x_old) < tol:
             break
 
@@ -198,5 +206,4 @@ print(gauss_jack(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3
 print(gauss_seidel(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
 # print(gauss_jack(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1]), vector([0, 0, 0]))) does not converge
 # print(gauss_seidel(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5]), vector([0, 0, 0, 0]))) does not converge
-print(gauss_elim(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1])))
-print(gauss_elim(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5])))
+
