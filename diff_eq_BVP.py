@@ -2,6 +2,7 @@ from linear_algebra import *
 from diff_eq_IVP import *
 from functions import *
 from math import *
+from numpy.linalg import *
 
 
 def lin_fin_diff(p, q, r, a, b, alpha, beta, N):
@@ -9,19 +10,21 @@ def lin_fin_diff(p, q, r, a, b, alpha, beta, N):
 
     h = (b - a)/(N+1)
 
-    b = vector([-(h**2)*r(a+h) + (1 + (h/2)*p(a+h))*alpha]+[-(h**2)*r(z) for z in [a + (i+2)*h for i in range(N)]] + [-(h**2)*r(b-h) + (1 - (h/2)*p(b-h))*beta])
+    B = vector([-(h**2)*r(a+h) + (1 + (h)*p(a+h)/2)*alpha]+[-(h**2)*r(a + (i+2)*h) for i in range(N-2)] + [-(h**2)*r(b-h) + (1 - (h)*p(b-h)/2)*beta])
 
-    A = [[2 + (h**2)*q(a+h), -1 + (h/2)*p(a+h)] + [0 for _ in range(N-1)]]
+    A = [[2 + (h**2)*q(a+h), -1 + (h)*p(a+h)/2] + [0 for _ in range(N-2)]]
 
     for i in range(2, N):
-        A.append([0 for _ in range(i-2)] + [-1 + (h/2)*p(a + i*h), 2 + (h**2)*q(a + i*h), -1 - (h/2)*p(a + i*h)] + [0 for _ in range(N-i-1)])
+        A.append([0 for _ in range(i-2)] + [-1 + (h)*p(a + i*h)/2, 2 + (h**2)*q(a + i*h), -1 - (h)*p(a + i*h)/2] + [0 for _ in range(N-i-1)])
 
-    A.append([0 for _ in range(N-2)] + [-1 - (h/2)*p(b-h), 2 + (h**2)*q(b-h)])
+    A.append([0 for _ in range(N-2)] + [-1 - (h)*p(b-h)/2, 2 + (h**2)*q(b-h)])
 
     A = matrix(A)
-    W = gauss_elim(A, b)
+    W = gauss_elim(A, B)
 
-    return [(a, alpha)] + [(a + (i+1)*h, w) for i, w in enumerate(b.coordinates)] + [(b, beta)]
+    print(solve(A.rows, B.coordinates))
+
+    return [(a, alpha)] + [(a + (i+1)*h, w) for i, w in enumerate(B.coordinates)] + [(b, beta)]
  
 def nonlin_fin_diff(f, a: float, b: float, alpha: float, beta: float, W_0: vector, N: int)->list[tuple]:
     """returns a list of N+2 points (including (a, alpha), (b, beta)) (x, y) which approximate the solution to the BVP y'' = f(x, y, y') with y(a) = alpha and y(b) = beta using method of finite differences for nonlinear BVPs"""
@@ -52,6 +55,4 @@ def nonlin_fin_diff(f, a: float, b: float, alpha: float, beta: float, W_0: vecto
 
     return [(a, alpha)] + [(a + (i+1)*h, w) for i, w in enumerate(W_0.coordinates)] + [(b, beta)]
 
-
-
-        
+print(lin_fin_diff(lambda x: -2/x, lambda x: 2/x**2, lambda x: sin(log(x))/x**2, 1, 2, 1, 2, 9))

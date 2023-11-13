@@ -70,7 +70,6 @@ class matrix:
     def print(self):
         for row in self.rows:
             print(row)
-        print()
 
 
 class vector(matrix):
@@ -201,9 +200,9 @@ def gauss_seidel(A: matrix, b: vector, x: vector, N: int = 1000)->vector:
 
     return x
 
-print(gauss_elim(matrix([[4, -1, 1], [2, 5, 2], [1, 2, 4]]), vector([8, 3, 11])))
-print(gauss_jack(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
-print(gauss_seidel(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
+# print(gauss_elim(matrix([[4, -1, 1], [2, 5, 2], [1, 2, 4]]), vector([8, 3, 11])))
+# print(gauss_jack(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
+# print(gauss_seidel(matrix([[10, -1, 2, 0], [-1, 11, -1, 3], [2, -1, 10, -1], [0, 3, -1, 8]]), vector([6, 25, -11, 15]), vector([0, 0, 0, 0])))
 # print(gauss_jack(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1]), vector([0, 0, 0]))) does not converge
 # print(gauss_seidel(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5]), vector([0, 0, 0, 0]))) does not converge
 
