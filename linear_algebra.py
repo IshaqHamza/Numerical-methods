@@ -45,7 +45,7 @@ class matrix:
         if n < 0:
             return self.inverse()**(-n)
         return self*(self**(n-1))
-    
+
     def __eq__(self, other):
         return self.rows == other.rows
     
@@ -77,6 +77,9 @@ class vector(matrix):
         self.coordinates = coordinates
         self.dimension = len(coordinates)
         
+    def __getitem__(self, i):
+        return self.coordinates[i]
+
     def __abs__(self):
         return sqrt(sum([coordinate**2 for coordinate in self.coordinates]))
     
@@ -206,3 +209,4 @@ def gauss_seidel(A: matrix, b: vector, x: vector, N: int = 1000)->vector:
 # print(gauss_jack(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1]), vector([0, 0, 0]))) does not converge
 # print(gauss_seidel(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5]), vector([0, 0, 0, 0]))) does not converge
 
+print(inv([[1, 2, 3], [2, -1, 2], [3, 1, -2]])[1][2])

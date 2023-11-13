@@ -14,13 +14,16 @@ def linearfinitediff(a,b,y_a,y_b,n):
     print(A)
     for i in range(n): #fill the b vector
         x=a+(i+1)*h
+        print(x)
         if i==0:
-            b[i]=-h**2*r(x)+(1+h/2*p(x))*y_a
-        if i==n-1:
-            b[i]=-h**2*r(x)+(1-h/2*p(x))*y_b
+            b[i]=-h**2*r(x)+y_a*(1+h/2*p(x))
+        elif i==n-1:
+            b[i]=-h**2*r(x)+y_b*(1-h/2*p(x))
         else:
             b[i]=-h**2*r(x)
-    print(b)
+        print(b[i])
+    # print(b[0])
+    # print(b)
     y=np.linalg.solve(A,b)
     return y
 
@@ -46,6 +49,5 @@ def error(a,b,y_a,y_b,n):
 
 def u(x):
     return 1.139*x - 0.039/x**2 -0.3*math.sin(math.log(x)) - 0.1*math.cos(math.log(x))
-
 
 print(linearfinitediff(1,2,1,2,9))
