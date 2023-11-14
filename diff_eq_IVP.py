@@ -104,7 +104,7 @@ def neg_bin_int(k):
     for i in range(1, k+1):
         result /= i
 
-def adam_bash(f, a, b, alpha, h, m, W):
+def adam_bash(f, a, b, h, m, W):
     """uses adam-bashforth m-step method to solve the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h, given initial mesh points W = [(a, alpha), (a + h, y1), ..., (a + (m-1)*h, y(m-1))]"""
 
     F = [f(W[i][0], W[i][1]) for i in range(m)]
@@ -129,7 +129,7 @@ def adam_bash(f, a, b, alpha, h, m, W):
     
     return result
 
-def adam_mutton(f, a, b, alpha, h, m, W):
+def adam_mutton(f, a, b, h, m, W):
     """uses adam-moulton m-step method to solve the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h, given initial mesh points W = [(a, alpha), (a + h, y1), ..., (a + (m-1)*h, y(m-1))]"""
 
     F = [f(W[i][0], W[i][1]) for i in range(m)]
@@ -154,7 +154,7 @@ def adam_mutton(f, a, b, alpha, h, m, W):
     
     return result
 
-def pred_corr(f, a, b, alpha, h, m, W):
+def pred_corr(f, a, b, h, m, W):
     """uses m step predictor corrector method for solving the IVP y' = f(x, y) with y(a) = alpha on the interval [a, b] with step size h, given initial mesh points W = [(a, alpha), (a + h, y1), ..., (a + (m-1)*h, y(m-1))]"""
     
     F = [f(W[i][0], W[i][1]) for i in range(m)]

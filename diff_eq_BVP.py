@@ -39,7 +39,7 @@ def nonlin_fin_diff(f, f_y, f_y1, a: float, b: float, alpha: float, beta: float,
 
         J = matrix(J)
 
-        FW = vector([2*W_0[0] - W_0[0] - alpha + (h**2)*f(a+h, W_0[0], (W_0[1] - alpha)/(2*h))] + [2*W_0[i] - W_0[i-1] - W_0[i+1] + (h**2)*f(a + (i+1)*h, W_0[i], (W_0[i+1] - W_0[i-1])/(2*h)) for i in range(1, N-1)] + [2*W_0[N-1] - W_0[N-2] - beta + (h**2)*f(b-h, W_0[N-1], (beta - W_0[N-2])/(2*h))])
+        FW = vector([2*W_0[0] - W_0[1] - alpha + (h**2)*f(a+h, W_0[0], (W_0[1] - alpha)/(2*h))] + [2*W_0[i] - W_0[i-1] - W_0[i+1] + (h**2)*f(a + (i+1)*h, W_0[i], (W_0[i+1] - W_0[i-1])/(2*h)) for i in range(1, N-1)] + [2*W_0[N-1] - W_0[N-2] - beta + (h**2)*f(b-h, W_0[N-1], (beta - W_0[N-2])/(2*h))])
 
         W_0 -= gauss_elim(J, FW)
 

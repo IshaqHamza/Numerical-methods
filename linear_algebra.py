@@ -79,6 +79,9 @@ class vector:
         
     def __getitem__(self, i):
         return self.coordinates[i]
+    
+    def __call__(self, f):
+        return vector([f(coordinate) for coordinate in self.coordinates])
 
     def __abs__(self):
         return sqrt(sum([coordinate**2 for coordinate in self.coordinates]))
