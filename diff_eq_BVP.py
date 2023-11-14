@@ -11,7 +11,6 @@ def lin_fin_diff(p, q, r, a, b, alpha, beta, N):
     h = (b - a)/(N+1)
 
     B = vector([-(h**2)*r(a+h) + alpha*(1 + (h)*p(a+h)/2)]+[-(h**2)*r(a + (i+2)*h) for i in range(N-2)] + [-(h**2)*r(b-h) + beta*(1 - (h)*p(b-h)/2)])
-    print(B)
 
     A = [[2 + (h**2)*q(a+h), -1 + (h)*p(a+h)/2] + [0 for _ in range(N-2)]]
     
@@ -41,11 +40,11 @@ def nonlin_fin_diff(f, a: float, b: float, alpha: float, beta: float, W_0: vecto
 
         J.append([0 for _ in range(N-2)] + [-1 - (h)*f_y1(b-h, W_0[N-1], (beta - W_0[N-2])/h)/2, 2 + (h**2)*f_y(b-h, W_0[N-1], (beta - W_0[N-2])/h)])
 
-        W_0 -= matrix(J).inverse()(vector([f(a+h, W_0[0], (W_0[1] - alpha)/(2*h))] + [f(a + (i+1)*h, W_0[i], (W_0[i+1] - W_0[i-1])/(2*h)) for i in range(1, N-1)] + [f(b-h, W_0[N-1], (beta - W_0[N-2])/(2*h))]))
+        W_0 -= matrix(J).inverse()*(vector([f(a+h, W_0[0], (W_0[1] - alpha)/(2*h))] + [f(a + (i+1)*h, W_0[i], (W_0[i+1] - W_0[i-1])/(2*h)) for i in range(1, N-1)] + [f(b-h, W_0[N-1], (beta - W_0[N-2])/(2*h))]))
 
     return [(a, alpha)] + [(a + (i+1)*h, w) for i, w in enumerate(W_0.coordinates)] + [(b, beta)]
 
 
 
-print(lin_fin_diff(lambda x: -2/x, lambda y: 2/y**2, lambda z: sin(log(z))/z**2, 1, 2, 1, 2, 9))
-print(nonlin_fin_diff(lambda x, y, z: -2/x + 2/y**2 + sin(log(z))/z**2, 1, 2, 1, 2, vector([1 + 0.1*h for h in range(1, 10)]), 9, 100))
+# print(lin_fin_diff(lambda x: -2/x, lambda y: 2/y**2, lambda z: sin(log(z))/z**2, 1, 2, 1, 2, 9))
+print(nonlin_fin_diff(lambda x, y, y1: 4 + 0.25*x**3 - 0.125*y*y1, 1, 3, 17, 43/3, vector([1 + i/21 for i in range(1, 21)]), 20, 10))

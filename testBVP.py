@@ -49,5 +49,3 @@ def error(a,b,y_a,y_b,n):
 
 def u(x):
     return 1.139*x - 0.039/x**2 -0.3*math.sin(math.log(x)) - 0.1*math.cos(math.log(x))
-
-print(linearfinitediff(1,2,1,2,9))
