@@ -28,8 +28,8 @@ class matrix:
     def inverse(self):
         return matrix(inv(self.rows))
     
-    def __call__(self, vector):
-        return vector([sum([self.rows[i][j]*vector.coordinates[j] for j in range(self.dimension[1])]) for i in range(self.dimension[0])])
+    def __call__(self, v):
+        return vector([sum([self.rows[i][j]*v.coordinates[j] for j in range(self.dimension[1])]) for i in range(self.dimension[0])])
     
     def __str__(self):
         return str(self.rows)
@@ -72,7 +72,7 @@ class matrix:
             print(row)
 
 
-class vector(matrix):
+class vector:
     def __init__(self, coordinates):
         self.coordinates = coordinates
         self.dimension = len(coordinates)
@@ -209,3 +209,4 @@ def gauss_seidel(A: matrix, b: vector, x: vector, N: int = 1000)->vector:
 # print(gauss_jack(matrix([[1, 2, 3], [2, -1, 2], [3, 1, -2]]), vector([5, 1, -1]), vector([0, 0, 0]))) does not converge
 # print(gauss_seidel(matrix([[2, 8, 3, 1], [0, 2, -1, 4], [7, -2, 1, 2], [-1, 0, 5, 2]]), vector([-2, 4, 3, 5]), vector([0, 0, 0, 0]))) does not converge
 
+# print(matrix([[1, 2, 3], [1, 3, 4], [12, 12 ,11]])*matrix([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
